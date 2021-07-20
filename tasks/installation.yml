@@ -1,25 +1,27 @@
 ---
 
 - name: install mariadb related packages
-  package:
-    name: '{{ mariadb_packages }}'
-    state: present
-  notify:
-    - 'mariadb restart daemon'
-    - 'mariadb remove anonymous users'
-    - 'mariadb remove test database'
-  when: not ( ansible_os_family == 'RedHat' )
+  block:
+  - name: via package
+    package:
+      name: '{{ mariadb_packages }}'
+      state: present
+    notify:
+      - 'mariadb restart daemon'
+      - 'mariadb remove anonymous users'
+      - 'mariadb remove test database'
+    when: not ( ansible_os_family == 'RedHat' )
 
-- name: install mariadb related packages
-  yum:
-    name: '{{ mariadb_packages }}'
-    state: present
-    enablerepo: 'epel'
-  notify:
-    - 'mariadb restart daemon'
-    - 'mariadb remove anonymous users'
-    - 'mariadb remove test database'
-  when: ansible_os_family == 'RedHat'
+  - name: via yum
+    yum:
+      name: '{{ mariadb_packages }}'
+      state: present
+      enablerepo: 'epel'
+    notify:
+      - 'mariadb restart daemon'
+      - 'mariadb remove anonymous users'
+      - 'mariadb remove test database'
+    when: ansible_os_family == 'RedHat'
 
 - name: create mariadb configuration directory
   file:
